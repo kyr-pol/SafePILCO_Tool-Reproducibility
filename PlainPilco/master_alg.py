@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import gym
 from pilco.models import PILCO
 from pilco.controllers import RbfController, LinearController
@@ -112,6 +113,8 @@ def pilco_run(env, N, J,
                     X_eval = X_eval_.copy()
                 else:
                     X_eval = np.vstack((X_eval, X_eval_))
+            if not os.path.exists("results/" + name):
+                os.makedirs("results/" + name)    
             np.savetxt("results/" + name + "X_"+ str(seed) + ".csv", X, delimiter=',')
             np.savetxt("results/" + name + "X_eval_" + str(seed) + ".csv", X_eval, delimiter=',')
             np.savetxt("results/" + name + "evaluation_returns_sampled_" + str(seed) + ".csv",

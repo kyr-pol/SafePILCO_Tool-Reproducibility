@@ -5,19 +5,11 @@ from pilco.models import PILCO
 from pilco.controllers import RbfController, LinearController
 from pilco.rewards import ExponentialReward, LinearReward, CombinedRewards
 import tensorflow as tf
-from tensorflow import logging
-from pilco.utils import rollout, policy, reward_wrapper
+from pilco.utils import rollout, policy
 import sys
 
-name = sys.argv[1]
-seed = int(sys.argv[2])
-np.random.seed(seed)
 
-print(name)
-
-with tf.Session() as sess:
-    init = tf.initialize_all_variables()
-    sess.run(init)
+def swimmer_run(name, seed):
     env = gym.make('Swimmer-v2').env
     #env = SwimmerWrapper()
     state_dim = 8
@@ -73,7 +65,7 @@ with tf.Session() as sess:
     controller = RbfController(state_dim=state_dim, control_dim=control_dim, num_basis_functions=bf, max_action=max_action)
     # controller = LinearController(state_dim=state_dim, control_dim=control_dim, max_action=max_action)
 
-    pilco = PILCO(X, Y, controller=controller, horizon=T, reward=Rew, m_init=m_init, S_init=S_init)
+    pilco = PILCO((X, Y), controller=controller, horizon=T, reward=Rew, m_init=m_init, S_init=S_init)
     #for model in pilco.mgpr.models:
     #    model.likelihood.variance = 0.0001
     #    model.likelihood.variance.trainable = False
@@ -86,14 +78,14 @@ with tf.Session() as sess:
     X_eval=False
     for rollouts in range(N):
         print("**** ITERATION no", rollouts, " ****")
-        pilco.optimize_models(maxiter=5, restarts=2)
-        pilco.optimize_policy(maxiter=5, restarts=2)
+        pilco.optimize_models(restarts=2)
+        pilco.optimize_policy(maxiter=maxiter, restarts=2)
 
         X_new, Y_new, _, _ = rollout(env, pilco, timesteps=T_sim, verbose=True, SUBS=SUBS, render=True)
 
         cur_rew = 0
         for t in range(0,len(X_new)):
-            cur_rew += reward_wrapper(Rew, X_new[t, 0:state_dim, None].transpose(), 0.0001 * np.eye(state_dim))[0]
+            cur_rew += Rew.compute_reward(X_new[t, 0:state_dim, None].transpose(), 0.0001 * np.eye(state_dim))[0]
             if t == T: print('On this episode, on the planning horizon, PILCO reward was: ', cur_rew)
         print('On this episode PILCO reward was ', cur_rew)
 
@@ -101,7 +93,7 @@ with tf.Session() as sess:
         T_eval = gym_steps // SUBS
         # Update dataset
         X = np.vstack((X, X_new[:T,:])); Y = np.vstack((Y, Y_new[:T,:]))
-        pilco.mgpr.set_XY(X, Y)
+        pilco.mgpr.set_data((X, Y))
         if logging:
             if eval_max_timesteps is None:
                 eval_max_timesteps = sim_timesteps
@@ -116,6 +108,8 @@ with tf.Session() as sess:
                     X_eval = X_eval_.copy()
                 else:
                     X_eval = np.vstack((X_eval, X_eval_))
+            if not os.path.exists(name):
+                os.makedirs(name)
             np.savetxt(name + "X_" + seed + ".csv", X, delimiter=',')
             np.savetxt(name + "X_eval_" + seed + ".csv", X_eval, delimiter=',')
             np.savetxt(name + "evaluation_returns_sampled_" + seed + ".csv", evaluation_returns_sampled, delimiter=',')
@@ -125,3 +119,14 @@ with tf.Session() as sess:
     # env2 = SwimmerWrapper(monitor=True)
     # rollout(env2, pilco, policy=policy, timesteps=T+50, verbose=True, SUBS=SUBS)
     # env2.env.close()
+
+if __name__=='__main__':
+    name = sys.argv[1]
+    seed = int(sys.argv[2])
+    np.random.seed(seed)
+
+    swimmer_run(name, seed)
+
+    # If running on a server might want to restrict GPU utilization
+    # with tf.device('/device:GPU:3'):
+    #     swimmer_run(name, seed)
