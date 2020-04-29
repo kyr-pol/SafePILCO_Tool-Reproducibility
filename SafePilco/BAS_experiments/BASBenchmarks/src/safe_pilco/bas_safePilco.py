@@ -1,16 +1,16 @@
-# Wrapper for matlab basd environments
 import numpy as np
 import matlab.engine
+import sys
+import os
+from gpflow import set_trainable
 from pilco.models import PILCO
 from pilco.controllers import RbfController, LinearController
 from pilco.rewards import ExponentialReward, CombinedRewards
 import tensorflow as tf
-from tensorflow import logging
 import matplotlib.pyplot as plt
-import sys
 from gym import spaces
 from pilco.safe_pilco.rewards_safe import SingleConstraint
-from pilco.utils import rollout, policy, reward_wrapper, predict_trajectory_wrapper
+from pilco.utils import rollout, policy
 from pilco.safe_pilco.safe_pilco import SafePILCO
 
 
@@ -127,11 +127,11 @@ else:
     R2 = ExponentialReward(state_dim=state_dim, t=t2, W=w2)
     R = CombinedRewards(state_dim, [R1, R2], coefs=[1.0, -2.0])
 
-pilco = SafePILCO(X, Y, controller=controller, horizon=T, reward_add=R1, reward_mult=C1,
+pilco = SafePILCO((X, Y), controller=controller, horizon=T, reward_add=R1, reward_mult=C1,
                   m_init=m_init, S_init=S_init, mu=-50.0)
 for model in pilco.mgpr.models:
-    model.likelihood.variance = 0.1
-    model.likelihood.variance.trainable = False
+    model.likelihood.variance.assign(0.1)
+    set_trainable(model.likelihood.variance, False)
 
 N=3
 th = 0.05
@@ -150,18 +150,18 @@ for rollouts in range(N):
         m_ = m_init.copy()
         S_ = S_init.copy()
         for h in range(T):
-            m_h, S_h, _ = predict_trajectory_wrapper(pilco, m_init, S_init, h)
+            m_h, S_h, _ = pilco.predict(m_init, S_init, h)
             m_p[h,:], S_p[h,:,:] = m_h[:], S_h[:,:]
-            predicted_risks[h], _ = reward_wrapper(C1, m_h, S_h)
-            #predicted_rewards[h], _ = reward_wrapper(R1, m_h, S_h)
+            predicted_risks[h], _ = C1.compute_reward(m_h, S_h)
+            #predicted_rewards[h], _ = R1.compute_reward(m_h, S_h)
         estimate_risk = 1 - np.prod(1.0-predicted_risks)
         print(estimate_risk)
         if estimate_risk < th:
             if estimate_risk < th/4:
-                pilco.mu.mu.assign(0.75 * pilco.mu.mu.value)
+                pilco.mu.assign(0.75 * pilco.mu.value())
             X_new, Y_new, _, _ = rollout(env=env, pilco=pilco, timesteps=T)
             X = np.vstack((X, X_new)); Y = np.vstack((Y, Y_new))
-            pilco.mgpr.set_XY(X, Y)
+            pilco.mgpr.set_data((X, Y))
             for k in range(0, eval_runs):
                 [X_eval_, _,
                 evaluation_returns_sampled[rollouts, k],
@@ -180,13 +180,13 @@ for rollouts in range(N):
         else:
             print("*********CHANGING***********")
             X_2, Y_2, _, _ = rollout(env, pilco, timesteps=T, verbose=True)
-            _, _, r = predict_trajectory_wrapper(pilco, m_init, S_init, T)
+            _, _, r = pilco.predict(m_init, S_init, T)
             print("Before ", r)
             if estimate_risk > th:
-                pilco.mu.mu.assign(1.5 * pilco.mu.mu.value)
-            _, _, r = predict_trajectory_wrapper(pilco, m_init, S_init, T)
+                pilco.mu.assign(1.5 * pilco.mu.value())
+            _, _, r = pilco.predict(m_init, S_init, T)
             print("After ", r)
     else:
         X_new, Y_new, _, _ = rollout(env=env, pilco=pilco, timesteps=T)
         X = np.vstack((X, X_new)); Y = np.vstack((Y, Y_new))
-        pilco.mgpr.set_XY(X, Y)
+        pilco.mgpr.set_data((X, Y))

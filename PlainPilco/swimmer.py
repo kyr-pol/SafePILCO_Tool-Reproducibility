@@ -81,7 +81,7 @@ def swimmer_run(name, seed):
         pilco.optimize_models(restarts=2)
         pilco.optimize_policy(maxiter=maxiter, restarts=2)
 
-        X_new, Y_new, _, _ = rollout(env, pilco, timesteps=T_sim, verbose=True, SUBS=SUBS, render=True)
+        X_new, Y_new, _, _ = rollout(env, pilco, timesteps=T_sim, verbose=True, SUBS=SUBS, render=False)
 
         cur_rew = 0
         for t in range(0,len(X_new)):
@@ -104,7 +104,7 @@ def swimmer_run(name, seed):
                                                                timesteps=eval_max_timesteps,
                                                                verbose=False, SUBS=SUBS,
                                                                render=False)
-                if not X_eval:
+                if rollouts==0:
                     X_eval = X_eval_.copy()
                 else:
                     X_eval = np.vstack((X_eval, X_eval_))
