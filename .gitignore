@@ -2,3 +2,7 @@
 *.swp
 octave-workspace
 *results*
+build
+dist
+*.egg
+*.egg-info

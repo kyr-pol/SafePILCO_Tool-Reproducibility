@@ -1,6 +1,6 @@
 import numpy as np
 import gym
-from pilco.utils import policy, rollout
+from safe_pilco_experiments.utils import policy, rollout
 from linear_cars_env import LinearCars
 
 
