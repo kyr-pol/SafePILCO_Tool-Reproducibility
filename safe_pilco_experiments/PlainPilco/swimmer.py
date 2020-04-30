@@ -5,7 +5,7 @@ from pilco.models import PILCO
 from pilco.controllers import RbfController, LinearController
 from pilco.rewards import ExponentialReward, LinearReward, CombinedRewards
 import tensorflow as tf
-from pilco.utils import rollout, policy
+from safe_pilco_experiments.utils import rollout, policy
 import sys
 
 

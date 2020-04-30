@@ -2,16 +2,18 @@ import numpy as np
 import matlab.engine
 import sys
 import os
+import tensorflow as tf
 from gpflow import set_trainable
+import matplotlib.pyplot as plt
+from gym import spaces
+
 from pilco.models import PILCO
 from pilco.controllers import RbfController, LinearController
 from pilco.rewards import ExponentialReward, CombinedRewards
-import tensorflow as tf
-import matplotlib.pyplot as plt
-from gym import spaces
-from pilco.safe_pilco.rewards_safe import SingleConstraint
-from pilco.utils import rollout, policy
-from pilco.safe_pilco.safe_pilco import SafePILCO
+from safe_pilco_extension.rewards_safe import SingleConstraint
+from safe_pilco_extension.safe_pilco import SafePILCO
+
+from safe_pilco_experiments.utils import rollout, policy
 
 
 safe = int(sys.argv[1]) # turning this flag off (0) should the same experiment without safety considerations

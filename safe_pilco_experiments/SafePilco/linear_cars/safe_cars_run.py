@@ -1,42 +1,21 @@
 import numpy as np
 import tensorflow as tf
 import gym
-from pilco.models import PILCO
-from pilco.controllers import RbfController, LinearController
-from pilco.rewards import ExponentialReward, LinearReward
-from linear_cars_env import LinearCars
-from pilco.safe_pilco.rewards_safe import RiskOfCollision, ObjectiveFunction
-from pilco.safe_pilco.safe_pilco import SafePILCO
-from pilco.utils import rollout
-from pilco.utils import policy
 from gpflow import config
 from gpflow import set_trainable
 
+from pilco.models import PILCO
+from pilco.controllers import RbfController, LinearController
+from pilco.rewards import ExponentialReward, LinearReward
+from safe_pilco_extension.rewards_safe import RiskOfCollision, ObjectiveFunction
+from safe_pilco_extension.safe_pilco import SafePILCO
+
+from safe_pilco_experiments.utils import rollout, policy
+from safe_pilco_experiments.utils import Normalised_Env
+from linear_cars_env import LinearCars
+
 int_type = config.default_int()
 float_type = config.default_float()
-
-
-class Normalised_Env():
-    def __init__(self, m, std):
-        self.env = LinearCars()
-        self.action_space = self.env.action_space
-        self.observation_space = self.env.observation_space
-        self.m = m
-        self.std = std
-
-    def state_trans(self, x):
-        return np.divide(x-self.m, self.std)
-
-    def step(self, action):
-        ob, r, done, _ = self.env.step(action)
-        return self.state_trans(ob), r, done, {}
-
-    def reset(self):
-        ob =  self.env.reset()
-        return self.state_trans(ob)
-
-    def render(self):
-        self.env.render()
 
 
 def safe_cars(name='', seed=0, logging=False):
@@ -55,7 +34,7 @@ def safe_cars(name='', seed=0, logging=False):
         X1 = np.vstack((X1, X1_))
         Y1 = np.vstack((Y1, Y1_))
 
-    env = Normalised_Env(np.mean(X1[:,:4],0), np.std(X1[:,:4], 0))
+    env = Normalised_Env(env, np.mean(X1[:,:4],0), np.std(X1[:,:4], 0), gym_env=False)
     X, Y, _, _ = rollout(env, pilco=None, timesteps=T, verbose=True, random=True, render=False)
     for i in range(1,J):
         X_, Y_, _, _ = rollout(env, pilco=None, timesteps=T, verbose=True, random=True, render=False)

@@ -48,6 +48,33 @@ class myPendulum():
     def render(self):
         self.env.render()
 
+
+class Normalised_Env():
+    def __init__(self, env, m, std, gym_env=True):
+        if gym_env:
+            self.env = make(env).env
+        else:
+            self.env = env()
+        self.action_space = self.env.action_space
+        self.observation_space = self.env.observation_space
+        self.m = m
+        self.std = std
+
+    def state_trans(self, x):
+        return np.divide(x-self.m, self.std)
+
+    def step(self, action):
+        ob, r, done, _ = self.env.step(action)
+        return self.state_trans(ob), r, done, {}
+
+    def reset(self):
+        ob =  self.env.reset()
+        return self.state_trans(ob)
+
+    def render(self):
+        self.env.render()
+
+
 def rollout(env, pilco, timesteps, verbose=True, random=False, SUBS=1, render=False):
         X = []; Y = [];
         x = env.reset()

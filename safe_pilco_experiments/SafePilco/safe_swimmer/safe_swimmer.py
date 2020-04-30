@@ -2,13 +2,15 @@ import numpy as np
 import os
 import sys
 import gym
+import tensorflow as tf
+from gpflow import set_trainable
+
 from pilco.models import PILCO
 from pilco.controllers import RbfController, LinearController
 from pilco.rewards import ExponentialReward, LinearReward, CombinedRewards
-from pilco.safe_pilco.rewards_safe import SingleConstraint
-import tensorflow as tf
-from pilco.utils import rollout, policy
-from gpflow import set_trainable
+from safe_pilco_extension.rewards_safe import SingleConstraint
+
+from safe_pilco_experiments.utils import rollout, policy
 
 
 class SwimmerWrapper():

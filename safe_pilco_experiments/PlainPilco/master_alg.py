@@ -7,31 +7,7 @@ from pilco.rewards import ExponentialReward
 import tensorflow as tf
 from gpflow import set_trainable
 
-from pilco.utils import policy
-
-def rollout(env, pilco, timesteps, verbose=True, random=False, SUBS=1, render=False):
-        X = []; Y = [];
-        x = env.reset()
-        ep_return_full = 0
-        ep_return_sampled = 0
-        for timestep in range(timesteps):
-            if render: env.render()
-            u = policy(env, pilco, x, random)
-            for i in range(SUBS):
-                x_new, r, done, _ = env.step(u)
-                ep_return_full += r
-                if done: break
-                if render: env.render()
-            if verbose:
-                print("Action: ", u)
-                print("State : ", x_new)
-                print("Return so far: ", ep_return_full)
-            X.append(np.hstack((x, u)))
-            Y.append(x_new - x)
-            ep_return_sampled += r
-            x = x_new
-            if done: break
-        return np.stack(X), np.stack(Y), ep_return_sampled, ep_return_full
+from safe_pilco_experiments.utils import policy
 
 
 def pilco_run(env, N, J,
@@ -114,7 +90,7 @@ def pilco_run(env, N, J,
                 else:
                     X_eval = np.vstack((X_eval, X_eval_))
             if not os.path.exists("results/" + name):
-                os.makedirs("results/" + name)    
+                os.makedirs("results/" + name)
             np.savetxt("results/" + name + "X_"+ str(seed) + ".csv", X, delimiter=',')
             np.savetxt("results/" + name + "X_eval_" + str(seed) + ".csv", X_eval, delimiter=',')
             np.savetxt("results/" + name + "evaluation_returns_sampled_" + str(seed) + ".csv",
