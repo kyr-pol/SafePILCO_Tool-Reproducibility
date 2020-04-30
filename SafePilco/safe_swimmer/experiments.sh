@@ -1,5 +1,5 @@
 #!/bin/bash
-for i in {1..9}
+for i in {0..9}
 do
 python safe_swimmer.py $i
 done

@@ -5,12 +5,12 @@ name = 'results/X_'
 T = 12 * 4
 J = 6
 N = 5
-runs = 5
+runs = 10
 cost = np.zeros(runs)
 violations = np.zeros(runs)
 ep_violations = np.zeros(runs)
 interactions_blocked = []
-for i in range(1,runs):
+for i in range(0, runs):
     X = np.loadtxt( name + str(i) + ".csv", delimiter=',' )
 
     cost[i-1] = np.sqrt(sum((X[J*T:, 0] - 20)**2 + (X[J*T:, 1] - 20)**2) / (np.shape(X)[0] - T*J) )

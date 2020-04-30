@@ -18,7 +18,7 @@ sns.set(font_scale=1.5)
 sns.set_style('white')
 
 
-runs_so_far = 8
+runs_so_far = 10
 T = 25
 J = 10
 # for which_env in range(1):
@@ -28,12 +28,12 @@ all_returns_sampled = []
 all_returns_full = []
 path = 'res/'
 
-name = 'safe_swimmer_final'
-for i in range(1, runs_so_far+1):
-    X.append(np.loadtxt('X_' + name  + str(i) + '.csv', delimiter=','))
-    X_eval.append(np.loadtxt('X_eval_' + name  + str(i) + '.csv', delimiter=','))
-    all_returns_sampled.append(np.loadtxt('evaluation_returns_sampled_'+ name  + str(i) + '.csv', delimiter=','))
-    all_returns_full.append(np.loadtxt('evaluation_returns_full_' + name  + str(i) + '.csv', delimiter=','))
+name = ''
+for i in range(0, runs_so_far):
+    X.append(np.loadtxt('results/X_' + name  + str(i) + '.csv', delimiter=','))
+    X_eval.append(np.loadtxt('results/X_eval_' + name  + str(i) + '.csv', delimiter=','))
+    all_returns_sampled.append(np.loadtxt('results/evaluation_returns_sampled_'+ name  + str(i) + '.csv', delimiter=','))
+    all_returns_full.append(np.loadtxt('results/evaluation_returns_full_' + name  + str(i) + '.csv', delimiter=','))
 
 #all_bounds = calc_bounds()
 bound = (100 / 180 * np.pi) * 0.95
