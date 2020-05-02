@@ -16,7 +16,7 @@ for i in range(0, number_of_random_seeds):
 # Mountain Car
 SUBS=5
 T = 25
-for i in range(5, number_of_random_seeds):
+for i in range(0, number_of_random_seeds):
     env = gym.make('MountainCarContinuous-v0')
     name = 'mountain_car/'
     # Normalise before calling pilco_run
@@ -77,7 +77,7 @@ for i in range(0, number_of_random_seeds):
 
 # # Inverted Double Pendulum
 env = DoublePendWrapper()
-for i in range(0, 1):
+for i in range(0, number_of_random_seeds):
     controller = {'type':'rbf', 'basis_functions':40, 'max_action':1.0}
     state_dim = 6
     weights = 5.0 * np.eye(state_dim)
