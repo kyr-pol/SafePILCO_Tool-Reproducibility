@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import os
 from matplotlib import pyplot as plt
 import seaborn as sns
 
@@ -53,6 +54,8 @@ for which_env in range(5):
     high = max(means_per_iteration + std_per_iteration)
     r = high - low
     plt.ylim([low-0.1*r,high+0.1*r])
+    if not os.path.exists('plots/'):
+        os.makedirs('plots')
     plt.savefig("plots/" + name)
     plt.show()
 

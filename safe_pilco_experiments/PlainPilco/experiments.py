@@ -1,5 +1,5 @@
 from master_alg import pilco_run
-from safe_pilco_experiments.utils import Normalised_Env, DoublePendWrapper, myPendulum
+from safe_pilco_experiments.utils import policy, rollout, Normalised_Env, DoublePendWrapper, myPendulum
 import numpy as np
 import gym
 
@@ -32,7 +32,7 @@ for i in range(0, number_of_random_seeds):
     reward = {'type':'exp',
               't':np.divide([0.5,0.0] - env.m, env.std),
               'W':np.diag([0.5, 0.1])}
-    pilco_run(env, 4, 5,
+    pilco_run(env, 4, 2,
               SUBS=SUBS,
               restarts=3,
               maxiter=50,
@@ -75,7 +75,7 @@ for i in range(0, number_of_random_seeds):
               name=name,
               seed=i)
 
-# # Inverted Double Pendulum
+# Inverted Double Pendulum
 env = DoublePendWrapper()
 for i in range(0, number_of_random_seeds):
     controller = {'type':'rbf', 'basis_functions':40, 'max_action':1.0}

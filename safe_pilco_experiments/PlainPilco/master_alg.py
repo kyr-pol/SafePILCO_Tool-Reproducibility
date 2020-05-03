@@ -7,7 +7,7 @@ from pilco.rewards import ExponentialReward
 import tensorflow as tf
 from gpflow import set_trainable
 
-from safe_pilco_experiments.utils import policy
+from safe_pilco_experiments.utils import policy, rollout
 
 
 def pilco_run(env, N, J,

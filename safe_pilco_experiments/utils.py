@@ -52,7 +52,7 @@ class myPendulum():
 class Normalised_Env():
     def __init__(self, env, m, std, gym_env=True):
         if gym_env:
-            self.env = make(env).env
+            self.env = gym.make(env).env
         else:
             self.env = env()
         self.action_space = self.env.action_space
