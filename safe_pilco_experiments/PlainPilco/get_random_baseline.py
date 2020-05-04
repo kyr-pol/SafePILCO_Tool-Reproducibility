@@ -1,10 +1,6 @@
 import numpy as np
 import gym
-from master_alg import rollout
-from pilco.utils import policy
-
-from pendulum_swing_up import myPendulum
-from inv_double_pendulum import DoublePendWrapper
+from safe_pilco_experiments.utils import policy, rollout, myPendulum, DoublePendWrapper
 
 envs = [gym.make('MountainCarContinuous-v0'), gym.make('InvertedPendulum-v2'), myPendulum(), DoublePendWrapper(),
         gym.make('Swimmer-v2')]

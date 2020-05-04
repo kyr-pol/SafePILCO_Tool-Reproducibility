@@ -13,7 +13,7 @@ for i in range(0, number_of_random_seeds):
               eval_max_timesteps=100, seed=i,
               fixed_noise=0.001, name=name)
 
-# Mountain Car
+# Mountain Car
 SUBS=5
 T = 25
 for i in range(0, number_of_random_seeds):
@@ -49,11 +49,9 @@ for i in range(0, number_of_random_seeds):
               name=name,
               seed=i)
 
-
 # Pendulum Swing Up
 env = myPendulum()
 for i in range(0, number_of_random_seeds):
-    name = 'pend_swing_up/'
     controller = {'type':'rbf', 'basis_functions':30, 'max_action':2.0}
     reward = {'type':'exp', 't':np.array([1.0, 0.0, 0.0]), 'W':np.diag([2.0, 2.0, 0.3])}
     T = 40

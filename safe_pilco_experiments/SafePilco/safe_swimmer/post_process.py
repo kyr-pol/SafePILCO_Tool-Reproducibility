@@ -73,7 +73,7 @@ for run in range(runs_so_far):
 
 print("Mean best return: ", np.mean(all_runs_best_means))
 print("Std best return: ", np.std(all_runs_best_means))
-print("Mean number of collisions: ", np.mean(all_runs_collisions))
-print("Std number of collisions: ", np.std(all_runs_collisions))
+print("Mean number of constraint violations: ", np.mean(all_runs_collisions))
+print("Std number of constraint violations: ", np.std(all_runs_collisions))
 print("Mean number of interactions blocked: ", all_returns_full[0].shape[0] - np.mean(all_interactions_number))
 print("Std number of interactions blocked: ", np.std(all_interactions_number))

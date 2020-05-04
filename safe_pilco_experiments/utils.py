@@ -54,7 +54,7 @@ class Normalised_Env():
         if gym_env:
             self.env = gym.make(env).env
         else:
-            self.env = env()
+            self.env = env
         self.action_space = self.env.action_space
         self.observation_space = self.env.observation_space
         self.m = m
