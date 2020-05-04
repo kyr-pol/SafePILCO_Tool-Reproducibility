@@ -42,6 +42,7 @@ The swimmer experiments are run separately by the script `PlainPilco/swimmer_exp
 We run this on a server with an Nvidia Tesla v100 graphics card and each run took about an hour.
 
 After the experiments are run, results can be plotted by running `PlainPilco/post_process.py`. 
+The plots show the performance of a random policy at each task too, which can be estimated by running `PlainPILCO/get_random_baselines.py`.
 Plots appear one by one on the desktop and are saved in `PlainPilco/plots/`. 
 These correspond to Figure 3 from the QEST paper.
 
@@ -51,8 +52,11 @@ Three experiments are run, logged and the output data are post processed here, w
 To run the safe cars scenario experiments use `SafePilco/linear_cars/experiments.py` and `SafePilco/linear_cars/post_process.py`
 to calculate the relevant statistics.
 
-Similarly use `SafePilco/BAS_experiments/experiments.sh` and `SafePilco/BAS_experiments/post_process.py` for the BAS experiments, 
-and `SafePilco/safe_swimmer/experiments.sh` and `SafePilco/safe_swimmer/post_process.py` for the safe swimmer task. 
+The environment for the BAS experiments comes from [this](https://gitlab.com/natchi92/BASBenchmarks) Matlab repository.
+It has to be cloned by the user, and the path to its source folder should be given as an input argument to
+`SafePilco/BAS_experiments/experiments.sh`, so the command that runs the BAS experiments should look like: `./experiments.sh /Users/XXXX/BASBenchmarks/src`. To post process the results, run `SafePilco/BAS_experiments/post_process.py`.
+
+Similarly for the same swimmer task, `SafePilco/safe_swimmer/experiments.sh` and `SafePilco/safe_swimmer/post_process.py` run and analyse the experiments.
 
 The post process scripts print in the standard output the statistics that are reported in Table 2 of the paper.
 Experiments for the safe swimmer can take a long time to run, so using a GPU or cloud compute is a good idea, 
