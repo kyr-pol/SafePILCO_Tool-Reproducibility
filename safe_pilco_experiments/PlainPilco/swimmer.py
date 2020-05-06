@@ -70,7 +70,7 @@ def swimmer_run(name, seed):
     #    model.likelihood.variance = 0.0001
     #    model.likelihood.variance.trainable = False
 
-    logging = False # To save results in .csv files turn this flag to True
+    logging = True # To save results in .csv files turn this flag to True
     eval_runs = 10
     evaluation_returns_full = np.zeros((N, eval_runs))
     evaluation_returns_sampled = np.zeros((N, eval_runs))
@@ -122,8 +122,8 @@ def swimmer_run(name, seed):
 
 if __name__=='__main__':
     name = sys.argv[1]
-    seed = int(sys.argv[2])
-    np.random.seed(seed)
+    seed = sys.argv[2]
+    np.random.seed(int(seed))
 
     swimmer_run(name, seed)
 
