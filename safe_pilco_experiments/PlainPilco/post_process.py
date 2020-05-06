@@ -13,7 +13,7 @@ sns.set_style('white')
 paths = ["results/mountain_car/", "results/inverted_pendulum/",
          "results/pend_swing_up/", "results/double_pendulum/", "results/swimmer/"]
 names = ["mountain_car", "inverted_pendulum", "pend_swing_up", "double_pendulum", "swimmer"]
-runs_so_far = [10,10,5,8,8] # this refers to the number of random seeds each experiment has been run on
+runs_so_far = [10,10,10,10,10] # this refers to the number of random seeds each experiment has been run on
 
 for which_env in range(5):
     X = []
